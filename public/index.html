@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="light-mode">
+    <div class="app-container">
+        <!-- Sidebar / Desktop Nav -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Tracker</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="dashboard-view">
+                    <i class="fas fa-chart-line"></i> <span>Insights</span>
+                </a>
+                <a href="#" class="nav-item" data-target="kanban-view">
+                    <i class="fas fa-columns"></i> <span>Board</span>
+                </a>
+                <a href="#" class="nav-item" data-target="list-view">
+                    <i class="fas fa-list"></i> <span>List</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="nav-item no-bg" id="theme-toggle-btn">
+                    <i class="fas fa-moon" id="theme-icon"></i> <span>Theme</span>
+                </button>
+                <button class="nav-item no-bg" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div class="logo-group">
+                    <h2>Tracker</h2>
+                </div>
+                <div class="mobile-actions">
+                    <button class="icon-btn" id="mobile-theme-toggle"><i class="fas fa-moon"
+                            id="m-theme-icon"></i></button>
+                    <button class="icon-btn" onclick="openAppModal()"><i class="fas fa-plus"></i></button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header desktop-only">
+                    <h1 id="view-title">Insights</h1>
+                    <p id="current-date"></p>
+                </div>
+
+                <!-- Dashboard View -->
+                <section id="dashboard-view" class="view-section active">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <span class="kpi-label">Total Tracked</span>
+                            <div class="kpi-val" id="stat-total">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">No Responses</span>
+                            <div class="kpi-val" id="stat-no-response" style="color: var(--text-secondary)">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Interviewing</span>
+                            <div class="kpi-val" id="stat-interview" style="color: var(--c-interview)">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Offers Extended</span>
+                            <div class="kpi-val" id="stat-offer" style="color: var(--c-offer)">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Conversion Rate</span>
+                            <div class="kpi-val" id="stat-rate">0.0%</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Hiring Probability</span>
+                            <div class="kpi-val" id="stat-chance" style="color: var(--primary)">0.0%</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Avg. Daily Apps</span>
+                            <div class="kpi-val" id="stat-daily">0.0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Avg. Weekly Apps</span>
+                            <div class="kpi-val" id="stat-weekly">0.0</div>
+                        </div>
+                    </div>
+
+                    <div class="charts-wrapper">
+                        <div class="card chart-card span-all">
+                            <div class="card-title">Application Velocity</div>
+                            <div class="chart-box"><canvas id="timelineChart"></canvas></div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-title">Pipeline Breakdown</div>
+                            <div class="chart-box"><canvas id="statusChart"></canvas></div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-title">Conversion Funnel</div>
+                            <div class="funnel-container" id="funnel-wrapper">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Kanban View -->
+                <section id="kanban-view" class="view-section">
+                    <div class="mobile-kanban-tabs mobile-only">
+                        <button class="k-tab active" data-tab="Applied">Applied</button>
+                        <button class="k-tab" data-tab="Interview">Interview <span class="k-new-dot"
+                                id="dot-interview"></span></button>
+                        <button class="k-tab" data-tab="Offer">Offer <span class="k-new-dot"
+                                id="dot-offer"></span></button>
+                        <button class="k-tab" data-tab="Rejected">Rejected</button>
+                    </div>
+                    <div class="kanban-scroll-area">
+                        <div class="k-board">
+                            <!-- Columns -->
+                            <div class="k-col" data-status="Applied" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                <div class="k-col-header">
+                                    <div class="status-dot applied"></div> Applied <span class="k-count"
+                                        id="count-applied">0</span>
+                                </div>
+                                <div class="k-col-content" id="content-applied"></div>
+                            </div>
+                            <div class="k-col" data-status="Interview" ondrop="drop(event)"
+                                ondragover="allowDrop(event)">
+                                <div class="k-col-header">
+                                    <div class="status-dot interview"></div> Interview <span class="k-count"
+                                        id="count-interview">0</span>
+                                </div>
+                                <div class="k-col-content" id="content-interview"></div>
+                            </div>
+                            <div class="k-col" data-status="Offer" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                <div class="k-col-header">
+                                    <div class="status-dot offer"></div> Offer <span class="k-count"
+                                        id="count-offer">0</span>
+                                </div>
+                                <div class="k-col-content" id="content-offer"></div>
+                            </div>
+                            <div class="k-col" data-status="Rejected" ondrop="drop(event)"
+                                ondragover="allowDrop(event)">
+                                <div class="k-col-header">
+                                    <div class="status-dot rejected"></div> Rejected <span class="k-count"
+                                        id="count-rejected">0</span>
+                                </div>
+                                <div class="k-col-content" id="content-rejected"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- List View -->
+                <section id="list-view" class="view-section">
+                    <div class="list-bar">
+                        <div class="search-wrap">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-input" placeholder="Search applications...">
+                        </div>
+                        <div class="filter-wrap">
+                            <select id="status-filter">
+                                <option value="">All Statuses</option>
+                                <option value="Applied">Applied</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Offer">Offer</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card no-padding overflow-x">
+                        <table class="list-table">
+                            <thead>
+                                <tr>
+                                    <th>Company & Role</th>
+                                    <th>Status</th>
+                                    <th class="hide-mobile">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Mobile Bottom Nav -->
+            <nav class="mobile-nav">
+                <a href="#" class="m-nav-item active" data-target="dashboard-view"><i class="fas fa-chart-line"></i></a>
+                <a href="#" class="m-nav-item" data-target="kanban-view"><i class="fas fa-columns"></i></a>
+                <button class="m-nav-fab" onclick="openAppModal()"><i class="fas fa-plus"></i></button>
+                <a href="#" class="m-nav-item" data-target="list-view"><i class="fas fa-list"></i></a>
+                <a href="#" class="m-nav-item" id="m-logout-btn"><i class="fas fa-user-circle"></i></a>
+            </nav>
+        </main>
+    </div>
+
+    <!-- Desktop FAB -->
+    <button class="desktop-fab" onclick="openAppModal()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal Form -->
+    <div id="app-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">New Application</h3>
+                <button type="button" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="app-form">
+                    <input type="hidden" id="app-id">
+
+                    <div class="input-group">
+                        <label>Company</label>
+                        <input type="text" id="app-company" required placeholder="e.g. Acme Corp">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Role</label>
+                        <input type="text" id="app-role" required placeholder="e.g. Software Engineer">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Status</label>
+                            <select id="app-status">
+                                <option value="Applied">Applied</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Offer">Offer</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Ghosted">Ghosted</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Date</label>
+                            <input type="date" id="app-date" required>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-text" id="toggle-more">Add more details <i
+                            class="fas fa-chevron-down"></i></button>
+
+                    <div id="more-details" class="hidden">
+                        <div class="grid-2 mt-1">
+                            <div class="input-group">
+                                <label>Location</label>
+                                <input type="text" id="app-location" placeholder="City or Remote">
+                            </div>
+                            <div class="input-group">
+                                <label>Type</label>
+                                <select id="app-type">
+                                    <option value="Full-Time">Full-Time</option>
+                                    <option value="Internship">Internship</option>
+                                    <option value="Contract">Contract</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group mt-1">
+                            <label>Compensation (Target/Offered)</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="number" id="app-comp-base" placeholder="Base Salary" style="flex:2">
+                                <input type="number" id="app-comp-equity" placeholder="Equity/Options" style="flex:1">
+                                <input type="number" id="app-comp-bonus" placeholder="Bonus" style="flex:1">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Details / Notes</label>
+                            <textarea id="app-notes" rows="3"
+                                placeholder="Interviewer names, expectations, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary close-btn-action">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Track</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div id="view-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Details</h3>
+                <button type="button" class="close-view-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="view-content">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Saved Successfully</div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
