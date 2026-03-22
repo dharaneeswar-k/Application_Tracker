@@ -43,9 +43,64 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(target).classList.add('active');
 
-            const titles = { 'dashboard-view': 'Insights', 'kanban-view': 'Board', 'list-view': 'List' };
+            const navTitles = {
+                'dashboard-view': 'Insights',
+                'kanban-view': 'Board',
+                'list-view': 'List',
+                'todos-view': 'Tasks',
+                'timetables-view': 'Timetable',
+                'notes-view': 'Notes'
+            };
             if (document.getElementById('view-title')) {
-                document.getElementById('view-title').textContent = titles[target];
+                document.getElementById('view-title').textContent = navTitles[target];
+            }
+            // FAB Visibility logic
+            const deskFab = document.querySelector('.desktop-fab');
+            const todoFab = document.getElementById('todo-fab');
+            const ttFab = document.getElementById('timetable-fab');
+            const notesFab = document.getElementById('notes-fab');
+            const mNavFab = document.querySelector('.m-nav-fab');
+
+            // Set default visibility
+            if (todoFab) todoFab.style.display = 'none';
+            if (ttFab) ttFab.style.display = 'none';
+            if (notesFab) notesFab.style.display = 'none';
+
+            // Global FAB Context Logic
+            const updateFabContext = (view) => {
+                const triggerModal = () => {
+                    if (view === 'todos-view' && typeof openTodoModal === 'function') openTodoModal();
+                    else if (view === 'timetables-view' && typeof openTimetableModal === 'function') openTimetableModal();
+                    else if (view === 'notes-view' && typeof openNoteModal === 'function') openNoteModal();
+                    else if (typeof openAppModal === 'function') openAppModal();
+                };
+
+                const titles = {
+                    'todos-view': 'New Task',
+                    'timetables-view': 'New Plan',
+                    'notes-view': 'New Note'
+                };
+
+                if (deskFab) {
+                    deskFab.style.display = window.innerWidth > 850 ? 'flex' : 'none';
+                    deskFab.onclick = triggerModal;
+                    deskFab.title = titles[view] || 'New Application';
+                }
+                if (mNavFab) {
+                    mNavFab.style.display = 'flex';
+                    mNavFab.onclick = triggerModal;
+                    mNavFab.title = titles[view] || 'New Application';
+                }
+            };
+
+            updateFabContext(target);
+
+            if (target === 'todos-view') {
+                if (typeof fetchTodos === 'function') fetchTodos();
+            } else if (target === 'timetables-view') {
+                if (typeof fetchTimetables === 'function') fetchTimetables();
+            } else if (target === 'notes-view') {
+                if (typeof fetchNotes === 'function') fetchNotes();
             }
         });
     });
@@ -56,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('m-logout-btn')?.addEventListener('click', doLogout);
 
     fetchApplications();
+    if (typeof fetchTodos === 'function') fetchTodos();
 
     document.querySelectorAll('.close-btn, .close-btn-action').forEach(b => b.addEventListener('click', () => {
         document.getElementById('app-modal').classList.remove('active');
@@ -325,6 +381,9 @@ window.delApp = async function (id) {
     if (confirm('Are you strictly sure you want to remove this record?')) {
         await fetch(`/api/applications/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
         document.getElementById('view-modal').classList.remove('active');
+        if (typeof window.motivateUser === 'function') {
+            window.motivateUser('appDeleted');
+        }
         fetchApplications();
         showToast('Record removed');
     }
@@ -451,6 +510,11 @@ window.quickStatusUpdate = async function (appId, newStatus) {
                 body: JSON.stringify({ status: newStatus, timeline: app.timeline })
             });
             if (!res.ok) throw new Error();
+            if (typeof updateDashboard === 'function') updateDashboard();
+            if (typeof window.motivateUser === 'function') {
+                const type = (newStatus === 'Interview' || newStatus === 'Offer') ? 'appInterviewed' : 'appStatusChange';
+                window.motivateUser(type);
+            }
             fetchApplications(); // Refresh list/dashboard cleanly
         } catch (err) {
             app.status = oldStatus;

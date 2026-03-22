@@ -769,6 +769,10 @@ body.dark-mode .btn-primary {
     color: var(--text-primary);
 }
 
+.mobile-only {
+    display: none;
+}
+
 .desktop-fab {
     position: fixed;
     bottom: 2.5rem;
@@ -866,7 +870,8 @@ body.dark-mode .btn-primary {
 }
 
 .close-btn,
-.close-view-btn {
+.close-view-btn,
+.close-todo-btn {
     background: var(--surface);
     border: 1px solid var(--border);
     width: 32px;
@@ -1196,20 +1201,20 @@ body.dark-mode .btn-primary {
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         border-top: 1px solid var(--border);
-        padding: 10px 16px 24px;
-        justify-content: space-between;
+        padding: 8px 10px 24px;
+        justify-content: space-around;
         align-items: center;
-        z-index: 100;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
     }
 
     body.dark-mode .mobile-nav {
-        background: rgba(0, 0, 0, 0.85);
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+        background: rgba(10, 10, 10, 0.9);
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
     }
 
     .content-wrapper {
@@ -1227,32 +1232,61 @@ body.dark-mode .btn-primary {
 
     .m-nav-item {
         color: var(--text-secondary);
-        font-size: 1.25rem;
-        padding: 10px;
+        font-size: 1.15rem;
+        padding: 12px 6px;
         flex: 1;
         text-align: center;
         text-decoration: none;
-        transition: color 0.2s;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        position: relative;
+    }
+
+    .m-nav-item i {
+        transition: transform 0.2s ease;
     }
 
     .m-nav-item.active {
         color: var(--primary);
     }
 
+    .m-nav-item.active i {
+        transform: scale(1.1);
+    }
+
+    .m-nav-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: 4px;
+        width: 4px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 50%;
+    }
+
     .m-nav-fab {
         background: var(--primary);
         color: var(--primary-fg);
         border: none;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        font-size: 1.1rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 20px;
+        font-size: 1.25rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        transform: translateY(-16px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        box-shadow: 0 12px 24px var(--shadow-color);
         cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin: 0 4px;
+    }
+
+    .m-nav-fab:active {
+        transform: translateY(-20px) scale(0.9);
     }
 
     .kpi-grid {
@@ -1483,4 +1517,1213 @@ body.dark-mode .btn-primary {
 .profile-menu {
     border-top: 1px solid var(--border);
     padding-top: 1.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PREMIUM TO-DO SYSTEM — MOBILE FIRST
+═══════════════════════════════════════════════════════ */
+
+/* Header */
+.todos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.todos-heading {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text-primary);
+}
+
+/* ── Filter Strip ─────────────────────────────────── */
+.filter-scroll-wrap {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin: 0 -1rem 0.75rem;
+    padding: 0 1rem;
+}
+
+.filter-scroll-wrap::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    width: max-content;
+    padding-bottom: 4px;
+}
+
+.todo-filter-btn,
+.todo-cat-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 24px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+    letter-spacing: 0.01em;
+}
+
+.todo-filter-btn i,
+.todo-cat-filter-btn i {
+    font-size: 0.72rem;
+}
+
+.todo-filter-btn:hover,
+.todo-cat-filter-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+.todo-filter-btn.active,
+.todo-cat-filter-btn.active {
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Task Card ────────────────────────────────────── */
+.todo-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.3s ease;
+    box-shadow: var(--shadow);
+    display: flex;
+    cursor: pointer;
+    position: relative;
+}
+
+.todo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.todo-card:active {
+    transform: scale(0.99);
+}
+
+.todo-card.done {
+    opacity: 0.55;
+}
+
+.todo-card.pinned {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary), var(--shadow);
+}
+
+/* Priority accent stripe on left */
+.todo-card-accent {
+    width: 4px;
+    min-height: 100%;
+    flex-shrink: 0;
+    border-radius: 16px 0 0 16px;
+}
+
+.todo-card-inner {
+    flex: 1;
+    padding: 16px 14px;
+    min-width: 0;
+}
+
+/* Top row: checkbox + content + pin */
+.todo-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* Check button */
+.todo-check-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 0.72rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 1px;
+    flex-shrink: 0;
+}
+
+.todo-check-btn:hover {
+    border-color: var(--chk-color, var(--primary));
+    background: color-mix(in srgb, var(--chk-color, var(--primary)) 10%, transparent);
+}
+
+.todo-check-btn.checked {
+    background: var(--chk-color, #10b981);
+    border-color: var(--chk-color, #10b981);
+    color: white;
+}
+
+/* Content block */
+.todo-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.todo-title {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+}
+
+.todo-title.strikethrough {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Meta chip row */
+.todo-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.todo-cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--cat-color, #71717a) 12%, transparent);
+    color: var(--cat-color, #71717a);
+    letter-spacing: 0.01em;
+}
+
+.todo-cat-chip i {
+    font-size: 0.65rem;
+}
+
+.todo-priority-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.todo-priority-chip i {
+    font-size: 0.6rem;
+}
+
+.todo-due-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--surface);
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.todo-due-chip.overdue {
+    background: #ef444415;
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.todo-due-chip i {
+    font-size: 0.65rem;
+}
+
+/* Pin button */
+.todo-card-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.todo-pin-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+    margin-top: -2px;
+}
+
+.todo-pin-btn:hover {
+    opacity: 1;
+    color: var(--primary);
+}
+
+.todo-pin-btn.active {
+    opacity: 1;
+    color: var(--primary);
+    transform: rotate(-30deg);
+}
+
+/* ── Subtask Progress Bar ────────────────────────── */
+.todo-subtask-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.todo-subtask-track {
+    flex: 1;
+    height: 4px;
+    background: var(--surface-hover);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.todo-subtask-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.todo-subtask-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+/* ── Empty State ─────────────────────────────────── */
+.todo-empty {
+    grid-column: 1 / -1;
+    /* Span full grid width if in grid */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem;
+    color: var(--text-secondary);
+    width: 100%;
+    min-height: 400px;
+}
+
+.todo-empty-icon-wrap {
+    width: 120px;
+    height: 120px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+.todo-empty-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    letter-spacing: -0.04em;
+}
+
+.todo-empty-sub {
+    font-size: 1.1rem;
+    max-width: 400px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .todo-empty {
+        padding: 4rem 1rem;
+        min-height: 300px;
+    }
+
+    .todo-empty-icon-wrap {
+        width: 80px;
+        height: 80px;
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .todo-empty-title {
+        font-size: 1.5rem;
+    }
+
+    .todo-empty-sub {
+        font-size: 0.95rem;
+        max-width: 280px;
+    }
+}
+
+/* ── Mobile FAB ──────────────────────────────────── */
+.todo-fab {
+    display: none;
+    position: fixed;
+    bottom: calc(70px + 1.25rem);
+    right: 1.25rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.todo-fab:hover {
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* ── Nav Badges ──────────────────────────────────── */
+.nav-todo-badge {
+    background: #ef4444;
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.m-nav-item {
+    position: relative;
+}
+
+.m-todo-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.58rem;
+    font-weight: 800;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Subtask Rows in Modal ───────────────────────── */
+.subtask-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.subtask-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.subtask-check {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 0.6rem;
+    transition: all 0.2s;
+}
+
+.subtask-check.done {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.subtask-inp {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.subtask-del {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.subtask-del:hover {
+    background: #ef444415;
+    color: #ef4444;
+}
+
+/* ── Modal Actions ───────────────────────────────── */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+}
+
+.btn-danger-text {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+    margin-right: auto;
+}
+
+.btn-danger-text:hover {
+    opacity: 0.7;
+}
+
+/* ── Date Shortcuts ──────────────────────────────── */
+.date-shortcuts {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.date-shortcut-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.date-shortcut-btn:hover {
+    border-color: var(--primary);
+    background: var(--surface-hover);
+    color: var(--primary);
+}
+
+/* ─── MASSIVE UI — MODERN HEADERS ─────────────────── */
+
+.view-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-top: 1rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 950;
+    color: var(--text-primary);
+    letter-spacing: -0.04em;
+    margin-bottom: 0.4rem;
+    line-height: 1;
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+/* ─── TIMETABLE SYSTEM — PREMIUM SCHEDULING ─────────────────── */
+
+#timetable-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.75rem;
+    padding-bottom: 3rem;
+}
+
+.timetable-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 1.75rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.timetable-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px var(--shadow-color);
+}
+
+.timetable-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--primary);
+    opacity: 0.8;
+}
+
+.timetable-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.timetable-title {
+    font-size: 1.4rem;
+    font-weight: 900;
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.03em;
+}
+
+.timetable-count {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--surface-hover);
+    padding: 4px 12px;
+    border-radius: 100px;
+    display: inline-block;
+}
+
+.timetable-progress-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) var(--pg), var(--bg) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 900;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.timetable-progress-circle::after {
+    content: '';
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background: var(--surface);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.timetable-progress-circle span {
+    position: relative;
+    z-index: 1;
+}
+
+.timetable-days-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.day-preview-item {
+    background: var(--bg);
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    min-width: 80px;
+    border: 1px solid var(--border);
+}
+
+.day-preview-item .day-label {
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 2px;
+}
+
+.day-preview-item .day-status {
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.day-preview-more {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+}
+
+/* ── Modal Editor ────────────────────────────────────────── */
+
+/* ── Modal Editor & Manual Entry ────────────────────────── */
+
+.timetable-day-editor {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.timetable-day-editor:hover {
+    border-color: var(--primary);
+    box-shadow: 0 12px 32px var(--shadow-color);
+}
+
+.day-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.day-label-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.day-label-group i {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.day-label-inp {
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    font-weight: 950;
+    color: var(--text-primary);
+    width: 100%;
+    letter-spacing: -0.03em;
+    outline: none;
+}
+
+.day-tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.day-task-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 32px 32px;
+    gap: 14px;
+    align-items: center;
+    background: var(--surface);
+    padding: 8px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.day-task-row:focus-within {
+    border-color: var(--primary);
+    background: var(--bg);
+}
+
+.task-cat-inp,
+.task-topic-inp {
+    background: transparent;
+    border: none;
+    padding: 8px 4px;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.task-cat-inp {
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-right: 1px solid var(--border);
+}
+
+.task-topic-inp {
+    font-weight: 600;
+}
+
+.task-done-chk {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.btn-add-topic {
+    background: var(--surface-hover);
+    border: 1px dashed var(--border);
+    padding: 10px;
+    border-radius: 12px;
+    width: 100%;
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-add-topic:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.massive-fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 12px 32px var(--shadow-color);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.massive-fab:hover {
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* ── Modal Close & Task Delete ────────────────────────── */
+
+.close-timetable-btn {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.close-timetable-btn:hover {
+    background: var(--bg);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: rotate(90deg);
+}
+
+.task-del {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    opacity: 0.6;
+}
+
+.task-del:hover {
+    background: #ef444415;
+    border-color: #ef444450;
+    color: #ef4444;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   7. NOTES SYSTEM (PREMIUM & MASSIVE)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .notes-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.note-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+}
+
+.note-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--note-color, var(--primary));
+    opacity: 0.8;
+}
+
+.note-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px var(--shadow-color);
+    border-color: var(--primary);
+}
+
+.note-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.note-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.pin-active {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.note-content {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+}
+
+.note-link {
+    color: var(--primary);
+    text-decoration: underline;
+    opacity: 0.9;
+}
+
+.note-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.note-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.note-actions {
+    display: flex;
+    gap: 12px;
+    color: var(--text-secondary);
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .note-card {
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+/* Close buttons (Generic) */
+.close-note-btn,
+.close-todo-btn,
+.close-timetable-btn {
+    background: var(--bg-input);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+}
+
+.close-note-btn:hover,
+.close-todo-btn:hover,
+.close-timetable-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+body.dark-mode .close-note-btn:hover,
+body.dark-mode .close-todo-btn:hover,
+body.dark-mode .close-timetable-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+
+@media (max-width: 850px) {
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .timetable-card {
+        padding: 1.25rem;
+        border-radius: 20px;
+    }
+
+    #timetable-list {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .day-task-row {
+        grid-template-columns: 90px 1fr 28px 28px;
+        gap: 8px;
+        padding: 6px;
+    }
+
+    .massive-fab {
+        bottom: 80px;
+        right: 1.5rem;
+        width: 56px;
+        height: 56px;
+    }
+}
+
+/* Mascot & Bubble System */
+.mascot-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    transform: translateY(150%);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mascot-container.active {
+    transform: translateY(0);
+    pointer-events: all;
+}
+
+#mascot-img {
+    width: 120px;
+    /* Larger, friendly Sparky */
+    height: 120px;
+    object-fit: contain;
+    cursor: pointer;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.15));
+    animation: mascotFloat 4s ease-in-out infinite;
+}
+
+.mascot-bubble {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    max-width: 240px;
+    box-shadow: 0 12px 32px var(--shadow-color);
+    position: relative;
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mascot-container.active .mascot-bubble {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+#mascot-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Bubble Tail */
+.mascot-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 30px;
+    width: 16px;
+    height: 16px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transform: rotate(45deg);
+}
+
+@keyframes mascotFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@media (max-width: 850px) {
+    .mascot-container {
+        bottom: 0;
+        /* Hide behind footer */
+        left: 20px;
+        z-index: 900;
+        /* Lower than mobile-nav (1000) */
+        transform: translateY(100%);
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mascot-container.active {
+        transform: translateY(-64px);
+        /* Standing exactly on footer */
+    }
+
+    #mascot-img {
+        width: 95px;
+        /* Slightly larger, friendly Fedo! */
+        height: 95px;
+        animation: none;
+        /* No floating when standing on footer */
+    }
+
+    .mascot-bubble {
+        max-width: 180px;
+        margin-bottom: 5px;
+    }
+
+    .mascot-bubble::after {
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+    }
+
+    #mascot-text {
+        font-size: 0.85rem;
+    }
 }

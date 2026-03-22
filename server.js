@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken');
 
 const User = require('./models/User');
 const Application = require('./models/Application');
+const Todo = require('./models/Todo');
+const Timetable = require('./models/Timetable');
+const Note = require('./models/Note');
 const { protect } = require('./middleware/auth');
 
 dotenv.config();
@@ -105,6 +108,124 @@ app.delete('/api/applications/:id', protect, async (req, res) => {
         res.json({ message: 'Application removed' });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+});
+
+// ─── Todo Routes ────────────────────────────────────────────────────────────
+
+app.post('/api/todos', protect, async (req, res) => {
+    try {
+        const todo = await Todo.create({ ...req.body, userId: req.user.id });
+        res.status(201).json(todo);
+    } catch (err) { res.status(400).json({ message: err.message }); }
+});
+
+app.get('/api/todos', protect, async (req, res) => {
+    try {
+        const todos = await Todo.find({ userId: req.user.id })
+            .sort({ pinned: -1, dueDate: 1, createdAt: -1 });
+        res.json(todos);
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/todos/:id', protect, async (req, res) => {
+    try {
+        const todo = await Todo.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!todo) return res.status(404).json({ message: 'Todo not found' });
+        res.json(todo);
+    } catch (err) { res.status(400).json({ message: err.message }); }
+});
+
+app.delete('/api/todos/:id', protect, async (req, res) => {
+    try {
+        const todo = await Todo.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        if (!todo) return res.status(404).json({ message: 'Todo not found' });
+        res.json({ message: 'Todo removed' });
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// ─── Timetable Routes ──────────────────────────────────────────────────────
+
+app.post('/api/timetables', protect, async (req, res) => {
+    try {
+        const timetable = await Timetable.create({ ...req.body, userId: req.user.id });
+        res.status(201).json(timetable);
+    } catch (err) { res.status(400).json({ message: err.message }); }
+});
+
+app.get('/api/timetables', protect, async (req, res) => {
+    try {
+        const timetables = await Timetable.find({ userId: req.user.id }).sort({ createdAt: -1 });
+        res.json(timetables);
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/timetables/:id', protect, async (req, res) => {
+    try {
+        const timetable = await Timetable.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!timetable) return res.status(404).json({ message: 'Timetable not found' });
+        res.json(timetable);
+    } catch (err) { res.status(400).json({ message: err.message }); }
+});
+
+app.delete('/api/timetables/:id', protect, async (req, res) => {
+    try {
+        const timetable = await Timetable.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        if (!timetable) return res.status(404).json({ message: 'Timetable not found' });
+        res.json({ message: 'Timetable removed' });
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+
+// Note Routes
+app.post('/api/notes', protect, async (req, res) => {
+    try {
+        const note = await Note.create({ ...req.body, userId: req.user.id });
+        res.status(201).json(note);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.get('/api/notes', protect, async (req, res) => {
+    try {
+        const notes = await Note.find({ userId: req.user.id }).sort({ isPinned: -1, updatedAt: -1 });
+        res.json(notes);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/notes/:id', protect, async (req, res) => {
+    try {
+        const note = await Note.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!note) return res.status(404).json({ error: 'Note not found' });
+        res.json(note);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/api/notes/:id', protect, async (req, res) => {
+    try {
+        const note = await Note.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        if (!note) return res.status(404).json({ error: 'Note not found' });
+        res.json({ message: 'Note deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

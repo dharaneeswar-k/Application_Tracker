@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isLogin = true;
 
-    // Check if user is already logged in
+    // Check if user is already logged in - Only redirect from login page
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && window.location.pathname.includes('login.html')) {
         window.location.href = '/index.html';
     }
 

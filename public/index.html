@@ -28,7 +28,20 @@
                 <a href="#" class="nav-item" data-target="list-view">
                     <i class="fas fa-list"></i> <span>List</span>
                 </a>
+                <a href="#" class="nav-item" data-target="todos-view">
+                    <i class="fas fa-check-square"></i> <span>To-Do</span>
+                    <span class="nav-todo-badge" id="todo-badge" style="display:none">0</span>
+                </a>
+                <a href="#" class="nav-item" data-target="timetables-view">
+                    <i class="fas fa-calendar-alt"></i> <span>Timetable</span>
+                </a>
+                <a href="#" class="nav-item" data-target="notes-view">
+                    <i class="fas fa-sticky-note"></i> <span>Notes</span>
+                </a>
             </nav>
+
+
+
             <div class="sidebar-footer">
                 <button class="nav-item no-bg" id="theme-toggle-btn">
                     <i class="fas fa-moon" id="theme-icon"></i> <span>Theme</span>
@@ -195,15 +208,106 @@
                         </table>
                     </div>
                 </section>
+
+                <!-- Todos View -->
+                <section id="todos-view" class="view-section">
+                    <div class="todos-header">
+                        <h2 class="todos-heading">My Tasks</h2>
+                        <button class="btn btn-primary" onclick="openTodoModal()" style="gap:8px">
+                            <i class="fas fa-plus"></i><span>New Task</span>
+                        </button>
+                    </div>
+
+                    <!-- Priority Filter -->
+                    <div class="filter-scroll-wrap">
+                        <div class="filter-tabs">
+                            <button class="todo-filter-btn active" data-filter="All"><i class="fas fa-layer-group"></i>
+                                All</button>
+                            <button class="todo-filter-btn" data-filter="High" style="--f-color:#ef4444"><i
+                                    class="fas fa-arrow-up"></i> High</button>
+                            <button class="todo-filter-btn" data-filter="Medium" style="--f-color:#f59e0b"><i
+                                    class="fas fa-minus"></i> Medium</button>
+                            <button class="todo-filter-btn" data-filter="Low" style="--f-color:#10b981"><i
+                                    class="fas fa-arrow-down"></i> Low</button>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="filter-scroll-wrap" style="margin-top:0">
+                        <div class="filter-tabs">
+                            <button class="todo-cat-filter-btn active" data-cat="All"><i class="fas fa-border-all"></i>
+                                All</button>
+                            <button class="todo-cat-filter-btn" data-cat="Job Prep"><i class="fas fa-briefcase"></i> Job
+                                Prep</button>
+                            <button class="todo-cat-filter-btn" data-cat="Interview"><i class="fas fa-comments"></i>
+                                Interview</button>
+                            <button class="todo-cat-filter-btn" data-cat="Networking"><i class="fas fa-users"></i>
+                                Networking</button>
+                            <button class="todo-cat-filter-btn" data-cat="Learning"><i class="fas fa-book-open"></i>
+                                Learning</button>
+                            <button class="todo-cat-filter-btn" data-cat="Personal"><i class="fas fa-user"></i>
+                                Personal</button>
+                            <button class="todo-cat-filter-btn" data-cat="Other"><i class="fas fa-tag"></i>
+                                Other</button>
+                        </div>
+                    </div>
+
+                    <!-- Task List -->
+                    <div id="todo-list"></div>
+                </section>
+
+                <!-- Timetables View -->
+                <section id="timetables-view" class="view-section">
+                    <div class="view-header-row">
+                        <div class="view-header-info">
+                            <h2 class="section-title">Your Plans</h2>
+                            <p class="section-subtitle">Manage your structured schedules and exam preps</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openTimetableModal()">
+                            <i class="fas fa-plus"></i><span>New Plan</span>
+                        </button>
+                    </div>
+
+                    <div id="timetable-list"></div>
+                </section>
+
+                <!-- Notes View -->
+                <section id="notes-view" class="view-section">
+                    <div class="view-header-row">
+                        <div class="view-header-info">
+                            <h2 class="section-title">Quick Notes</h2>
+                            <p class="section-subtitle">Save reminders, links, and important snippets</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openNoteModal()">
+                            <i class="fas fa-plus"></i><span>New Note</span>
+                        </button>
+                    </div>
+
+                    <div id="notes-list" class="notes-grid"></div>
+                </section>
             </div>
 
             <!-- Mobile Bottom Nav -->
             <nav class="mobile-nav">
-                <a href="#" class="m-nav-item active" data-target="dashboard-view"><i class="fas fa-chart-line"></i></a>
-                <a href="#" class="m-nav-item" data-target="kanban-view"><i class="fas fa-columns"></i></a>
-                <button class="m-nav-fab" onclick="openAppModal()"><i class="fas fa-plus"></i></button>
-                <a href="#" class="m-nav-item" data-target="list-view"><i class="fas fa-list"></i></a>
-                <a href="#" class="m-nav-item" id="m-logout-btn"><i class="fas fa-user-circle"></i></a>
+                <a href="#" class="m-nav-item active" data-target="dashboard-view" title="Insights"><i
+                        class="fas fa-chart-line"></i></a>
+                <a href="#" class="m-nav-item" data-target="kanban-view" title="Board"><i
+                        class="fas fa-columns"></i></a>
+                <a href="#" class="m-nav-item" data-target="list-view" title="List"><i class="fas fa-list"></i></a>
+
+                <button class="m-nav-fab" onclick="openAppModal()" title="New Application"><i
+                        class="fas fa-plus"></i></button>
+
+                <a href="#" class="m-nav-item" data-target="todos-view" title="Tasks">
+                    <i class="fas fa-check-square"></i>
+                    <span class="m-todo-badge" id="m-todo-badge" style="display:none">0</span>
+                </a>
+                <a href="#" class="m-nav-item" data-target="timetables-view" title="Timetable">
+                    <i class="fas fa-calendar-alt"></i>
+                </a>
+                <a href="#" class="m-nav-item" data-target="notes-view" title="Notes">
+                    <i class="fas fa-sticky-note"></i>
+                </a>
             </nav>
         </main>
     </div>
@@ -354,7 +458,172 @@
         </div>
     </div>
 
+    <!-- Todo Add/Edit Modal -->
+    <div id="todo-modal" class="modal-overlay">
+        <div class="modal todo-modal-sheet">
+            <div class="modal-header">
+                <h3 id="todo-modal-title">New Task</h3>
+                <button type="button" class="close-todo-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="todo-form">
+                    <input type="hidden" id="todo-id">
+
+                    <div class="input-group">
+                        <label>Task Title *</label>
+                        <input type="text" id="todo-title-inp" required placeholder="What needs to be done?">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Category</label>
+                            <select id="todo-category-inp">
+                                <option value="Job Prep">Job Prep</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Networking">Networking</option>
+                                <option value="Learning">Learning</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Other" selected>Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Priority</label>
+                            <select id="todo-priority-inp">
+                                <option value="High">High</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Due Date</label>
+                        <div class="date-shortcuts">
+                            <button type="button" class="date-shortcut-btn" onclick="setDueDate('today')">
+                                <i class="fas fa-calendar-day"></i> Today
+                            </button>
+                            <button type="button" class="date-shortcut-btn" onclick="setDueDate('tomorrow')">
+                                <i class="fas fa-sun"></i> Tomorrow
+                            </button>
+                            <button type="button" class="date-shortcut-btn" onclick="setDueDate('clear')">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                        <input type="date" id="todo-due-inp">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Description</label>
+                        <textarea id="todo-desc-inp" rows="2" placeholder="Optional notes..."></textarea>
+                    </div>
+
+                    <!-- Subtasks -->
+                    <div class="input-group">
+                        <div class="subtask-header">
+                            <label>Subtasks</label>
+                            <button type="button" class="btn-text" onclick="addSubtask()">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div id="todo-subtasks-list"></div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-danger-text" id="todo-del-trigger" style="display:none"
+                            onclick="deleteTodo(document.getElementById('todo-id').value)">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timetable Modal -->
+    <div id="timetable-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="timetable-modal-title">New Plan</h3>
+                <button type="button" class="close-timetable-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="timetable-form">
+                    <input type="hidden" id="timetable-id">
+
+                    <div class="input-group">
+                        <label>Plan Title *</label>
+                        <input type="text" id="timetable-title-inp" placeholder="e.g. 10-Day Exam Prep" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Smart Paste (Optional)</label>
+                        <textarea id="timetable-bulk-inp" rows="5" placeholder="Paste your plan here"></textarea>
+                        <span class="help-text">Auto-parses Days and Topics from your text.</span>
+                    </div>
+
+                    <div id="timetable-days-container"></div>
+
+                    <button type="button" class="btn btn-secondary" onclick="addDayToModal()"
+                        style="width: 100%; margin-top: 1rem; border-style: dashed; border-width: 2px;">
+                        <i class="fas fa-plus"></i> Add New Day
+                    </button>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-danger-text" id="timetable-del-trigger"
+                            style="display:none">
+                            <i class="fas fa-trash"></i> Delete Plan
+                        </button>
+                        <button type="submit" class="btn btn-primary">Save Plan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="note-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="note-modal-title">New Note</h3>
+                <button type="button" class="close-note-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="note-form">
+                    <input type="hidden" id="note-id">
+                    <div class="input-group">
+                        <label>Title *</label>
+                        <input type="text" id="note-title-inp" required placeholder="Note title...">
+                    </div>
+                    <div class="input-group">
+                        <label>Content *</label>
+                        <textarea id="note-content-inp" required placeholder="Type or paste your text/links here..."
+                            style="min-height: 200px;"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-danger-text" id="note-del-trigger" style="display:none">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="note-save-btn">Save Note</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="mascot-container" class="mascot-container">
+        <div id="mascot-bubble" class="mascot-bubble">
+            <p id="mascot-text">Hey! Ready to crush some goals today?</p>
+        </div>
+        <img src="assets/mascot.png" id="mascot-img" alt="Mascot">
+    </div>
+
     <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/todos.js"></script>
+    <script src="js/timetables.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/mascot.js"></script>
 </body>
 
 </html>
