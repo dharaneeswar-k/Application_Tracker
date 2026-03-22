@@ -17,7 +17,8 @@ const applicationSchema = new mongoose.Schema({
     base: { type: Number, default: 0 },
     equity: { type: Number, default: 0 },
     bonus: { type: Number, default: 0 },
-    currency: { type: String, default: 'USD' }
+    stipend: { type: Number, default: 0 },
+    currency: { type: String, default: 'INR' }
   },
   timeline: [{
     status: { type: String },

@@ -50,6 +50,7 @@
                     <button class="icon-btn" id="mobile-theme-toggle"><i class="fas fa-moon"
                             id="m-theme-icon"></i></button>
                     <button class="icon-btn" onclick="openAppModal()"><i class="fas fa-plus"></i></button>
+                    <button class="icon-btn" onclick="toggleProfile()"><i class="fas fa-user-circle"></i></button>
                 </div>
             </header>
 
@@ -225,12 +226,28 @@
 
                     <div class="input-group">
                         <label>Company</label>
-                        <input type="text" id="app-company" required placeholder="e.g. Acme Corp">
+                        <input type="text" id="app-company" required placeholder="e.g. Google">
                     </div>
 
                     <div class="input-group">
                         <label>Role</label>
                         <input type="text" id="app-role" required placeholder="e.g. Software Engineer">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Resume Version</label>
+                        <div class="resume-input-wrapper">
+                            <select id="app-resume-select" onchange="toggleResumeOther(this.value)">
+                                <option value="Full Stack Resume">Full Stack Resume</option>
+                                <option value="Software Engineer Resume">Software Engineer Resume</option>
+                                <option value="Frontend Resume">Frontend Resume</option>
+                                <option value="Backend Resume">Backend Resume</option>
+                                <option value="Generic">Generic</option>
+                                <option value="other">Other (Type below)</option>
+                            </select>
+                            <input type="text" id="app-resume-other" class="hidden mt-1"
+                                placeholder="Type resume version name...">
+                        </div>
                     </div>
 
                     <div class="grid-2">
@@ -268,12 +285,14 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="input-group mt-1">
-                            <label>Compensation (Target/Offered)</label>
-                            <div style="display:flex; gap:10px;">
-                                <input type="number" id="app-comp-base" placeholder="Base Salary" style="flex:2">
-                                <input type="number" id="app-comp-equity" placeholder="Equity/Options" style="flex:1">
-                                <input type="number" id="app-comp-bonus" placeholder="Bonus" style="flex:1">
+                        <div class="grid-2 mt-1">
+                            <div class="input-group">
+                                <label>Annual Package (LPA)</label>
+                                <input type="text" id="app-comp-lpa" placeholder="e.g. 4.5L or 12">
+                            </div>
+                            <div class="input-group">
+                                <label>Monthly Stipend (Optional)</label>
+                                <input type="number" id="app-comp-stipend" placeholder="₹ per month">
                             </div>
                         </div>
                         <div class="input-group">

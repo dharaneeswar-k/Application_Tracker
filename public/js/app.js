@@ -108,10 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
             applicationDate: document.getElementById('app-date').value,
             status: newStatus,
             notes: document.getElementById('app-notes').value,
+            resumeVersion: document.getElementById('app-resume-select').value === 'other' ?
+                document.getElementById('app-resume-other').value :
+                document.getElementById('app-resume-select').value,
             compensation: {
-                base: Number(document.getElementById('app-comp-base')?.value) || 0,
-                equity: Number(document.getElementById('app-comp-equity')?.value) || 0,
-                bonus: Number(document.getElementById('app-comp-bonus')?.value) || 0,
+                base: parseLPA(document.getElementById('app-comp-lpa')?.value),
+                stipend: parseFloat(document.getElementById('app-comp-stipend')?.value) || 0,
+                currency: 'INR'
             },
             timeline: newTimeline
         };
@@ -169,20 +172,64 @@ window.openAppModal = function (id = null) {
             document.getElementById('app-location').value = app.location || '';
             document.getElementById('app-type').value = app.jobType || 'Full-Time';
             document.getElementById('app-notes').value = app.notes || '';
-            document.getElementById('app-comp-base').value = app.compensation?.base || '';
-            document.getElementById('app-comp-equity').value = app.compensation?.equity || '';
-            document.getElementById('app-comp-bonus').value = app.compensation?.bonus || '';
+
+            const resVal = app.resumeVersion || 'Generic';
+            const select = document.getElementById('app-resume-select');
+            const otherInput = document.getElementById('app-resume-other');
+
+            let isKnown = false;
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === resVal) {
+                    select.selectedIndex = i;
+                    isKnown = true;
+                    break;
+                }
+            }
+
+            if (!isKnown && resVal !== 'Generic') {
+                select.value = 'other';
+                otherInput.value = resVal;
+                otherInput.classList.remove('hidden');
+            } else {
+                otherInput.classList.add('hidden');
+                otherInput.value = '';
+            }
+
+            document.getElementById('app-comp-lpa').value = app.compensation?.base ? (app.compensation.base / 100000) + 'L' : '';
+            document.getElementById('app-comp-stipend').value = app.compensation?.stipend || '';
         }
     } else {
         title.textContent = 'New Application';
         form.reset();
         document.getElementById('app-id').value = '';
         document.getElementById('app-date').value = new Date().toISOString().split('T')[0];
-        document.getElementById('app-comp-base').value = '';
-        document.getElementById('app-comp-equity').value = '';
-        document.getElementById('app-comp-bonus').value = '';
+        document.getElementById('app-comp-lpa').value = '';
+        document.getElementById('app-comp-stipend').value = '';
     }
     modal.classList.add('active');
+}
+
+window.toggleResumeOther = function (val) {
+    const other = document.getElementById('app-resume-other');
+    if (val === 'other') {
+        other.classList.remove('hidden');
+        other.focus();
+    } else {
+        other.classList.add('hidden');
+    }
+}
+
+function parseLPA(val) {
+    if (!val) return 0;
+    const clean = val.toString().toLowerCase().replace(/[^0-9.]/g, '');
+    let num = parseFloat(clean) || 0;
+    if (val.toString().toLowerCase().includes('l')) {
+        return num * 100000;
+    }
+    // If user enters 450000 directly
+    if (num >= 1000) return num;
+    // Default to LPA if small number like 4.5
+    return num * 100000;
 }
 
 window.viewApp = function (id) {
@@ -191,13 +238,28 @@ window.viewApp = function (id) {
     const date = new Date(app.applicationDate).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
 
     let compHtml = '';
-    if (app.compensation && (app.compensation.base || app.compensation.equity || app.compensation.bonus)) {
-        const total = (app.compensation.base || 0) + (app.compensation.equity || 0) + (app.compensation.bonus || 0);
+    if (app.compensation && (app.compensation.base || app.compensation.stipend)) {
+        const annual = app.compensation.base || 0;
+        const monthly = Math.round(annual / 12);
+        const stipend = app.compensation.stipend || 0;
+
+        const f = (num) => '₹' + num.toLocaleString('en-IN');
+
         compHtml = `
         <div class="comp-badge">
-            <span class="comp-label">Total Target Comp</span>
-            <span class="comp-val">$${total.toLocaleString()}</span>
-            <span class="comp-sub">Base: $${(app.compensation.base || 0).toLocaleString()} | Equity: $${(app.compensation.equity || 0).toLocaleString()} | Bonus: $${(app.compensation.bonus || 0).toLocaleString()}</span>
+            <span class="comp-label">ANNUAL PACKAGE (LPA)</span>
+            <span class="comp-val">${f(annual)}</span>
+            <div class="comp-details-grid">
+                <div class="comp-detail-item">
+                    <span class="detail-label">Monthly</span>
+                    <span class="detail-val">${f(monthly)}</span>
+                </div>
+                ${stipend ? `
+                <div class="comp-detail-item">
+                    <span class="detail-label">Stipend</span>
+                    <span class="detail-val">${f(stipend)}</span>
+                </div>` : ''}
+            </div>
         </div>`;
     }
 
@@ -228,6 +290,10 @@ window.viewApp = function (id) {
             <span class="badge ${app.status.toLowerCase()}">${app.status}</span>
         </div>
         
+        <div class="detail-row">
+            <span class="detail-label">Resume Used</span>
+            <span class="detail-val">${app.resumeVersion || 'Generic'}</span>
+        </div>
         <div class="detail-row">
             <span class="detail-label">Applied On</span>
             <span class="detail-val">${date}</span>

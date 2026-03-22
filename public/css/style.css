@@ -587,16 +587,24 @@ body.dark-mode .nav-item.active {
 }
 
 .search-wrap input,
-select {
+select,
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="email"],
+input[type="password"],
+textarea {
     width: 100%;
-    padding: 10px 14px;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
     border: 1px solid var(--border);
-    border-radius: 10px;
     background: var(--bg);
     color: var(--text-primary);
     font-family: var(--font);
     font-size: 0.95rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .search-wrap input {
@@ -606,9 +614,15 @@ select {
 input:focus,
 select:focus,
 textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--surface-hover);
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    background: var(--bg);
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 .list-table {
@@ -684,27 +698,20 @@ textarea:focus {
 .input-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 1.25rem;
+    gap: 6px;
+    margin-bottom: 1.5rem;
 }
 
 .input-group label {
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary);
+    letter-spacing: -0.01em;
 }
 
 textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--bg);
-    color: var(--text-primary);
-    font-family: var(--font);
-    font-size: 0.95rem;
     resize: vertical;
-    min-height: 80px;
+    min-height: 100px;
 }
 
 .btn {
@@ -1367,4 +1374,60 @@ body.dark-mode .btn-primary {
     .modal-body {
         padding-bottom: 40px;
     }
+}
+
+/* Indian Compensation Styling */
+.comp-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.comp-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+
+.comp-val {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.comp-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+}
+
+.comp-detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.detail-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
 }
