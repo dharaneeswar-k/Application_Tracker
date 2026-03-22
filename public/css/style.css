@@ -1376,6 +1376,7 @@ body.dark-mode .btn-primary {
     }
 }
 
+
 /* Indian Compensation Styling */
 .comp-badge {
     background: var(--surface);
@@ -1430,4 +1431,56 @@ body.dark-mode .btn-primary {
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--text-primary);
+}
+
+/* Profile Drawer & User Card */
+.profile-sheet {
+    align-self: flex-end;
+    border-radius: 24px 24px 0 0;
+    max-height: 50vh;
+    animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-info-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+}
+
+.profile-avatar {
+    width: 48px;
+    height: 48px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.profile-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.profile-menu {
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
 }

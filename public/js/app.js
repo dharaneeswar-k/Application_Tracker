@@ -638,3 +638,16 @@ function initCharts() {
         }
     });
 }
+
+window.toggleProfile = function () {
+    const drawer = document.getElementById('profile-drawer');
+    if (!drawer) return;
+    const nameLabel = document.getElementById('profile-username-mob');
+    if (nameLabel) nameLabel.textContent = localStorage.getItem('username') || 'User';
+    drawer.classList.toggle('active');
+}
+
+window.doLogout = function () {
+    localStorage.clear();
+    window.location.href = '/login.html';
+}

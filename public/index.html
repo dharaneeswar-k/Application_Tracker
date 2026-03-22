@@ -327,6 +327,33 @@
     <!-- Toast -->
     <div id="toast" class="toast">Saved Successfully</div>
 
+    <!-- Profile Drawer (Mobile) -->
+    <div id="profile-drawer" class="modal-overlay">
+        <div class="modal profile-sheet">
+            <div class="modal-header">
+                <h3>My Account</h3>
+                <button type="button" class="close-btn" onclick="toggleProfile()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-info-card">
+                    <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                    <div class="profile-details">
+                        <span id="profile-username-mob" class="profile-name">User</span>
+                        <span class="profile-email">Premium Tier</span>
+                    </div>
+                </div>
+
+                <div class="profile-menu mt-2">
+                    <button class="btn btn-secondary"
+                        style="width:100%; justify-content: flex-start; margin-bottom: 12px; gap: 12px;"
+                        onclick="doLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
 </body>
 
